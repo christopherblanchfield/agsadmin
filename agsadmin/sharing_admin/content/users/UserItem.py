@@ -2,6 +2,8 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 from builtins import (ascii, bytes, chr, dict, filter, hex, input, int, map, next, oct, open, pow, range, round, str,
                       super, zip)
 
+from os import path
+
 from ...._utils import send_session_request
 from ..Item import Item
 
@@ -46,4 +48,30 @@ class UserItem(Item):
 
     def update_thumbnail(self, updated_thumbnail_info):
         r = self._create_operation_request(self, "updateThumbnail", method="POST", data=updated_thumbnail_info)
+        return send_session_request(self._session, r).json()
+
+    def check_status(self):
+        r = self._create_operation_request(self,
+                                operation = "status",
+                                method = "GET")
+
+        return send_session_request(self._session, r).json()
+
+    def commit(self):
+        r = self._create_operation_request(self,
+                                operation = "commit",
+                                method = "POST")
+
+        return send_session_request(self._session, r).json()
+
+    def add_part(self, file_path):
+        r = self._create_operation_request(self,
+                                operation = "addPart",
+                                method = "POST",
+                                data = {"partNum": 1},
+                                files = { "file": (path.basename(file_path),
+                                    open(file_path, 'rb'), 
+                                    'application/octet-stream',
+                                    {'Expires': '0'})})
+
         return send_session_request(self._session, r).json()

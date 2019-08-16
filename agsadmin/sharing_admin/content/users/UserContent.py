@@ -25,3 +25,14 @@ class UserContent(UserContentBase):
 
     def get_folder(self, folder_id):
         return UserFolderContent(self._session, self._url_full, self.username, folder_id)
+
+    def publish(self, item_id):
+        r = self._create_operation_request(self,
+                                operation = "publish",
+                                method = "POST",
+                                data = {"itemId": item_id,  #TODO: Make more flexible
+                                        "filetype": "serviceDefinition",
+                                        "buildInitialCache": "false",
+                                        "overwrite": "true"})
+
+        return send_session_request(self._session, r).json()
